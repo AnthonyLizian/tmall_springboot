@@ -15,9 +15,9 @@
         var data4Vue = {
             //uri表示访问哪个地址去获取数据
             uri:'categories',
-            //beans存放分类列表
+            //beans存放list
             beans: [],
-            // bean用来存放单条分类信息
+            //bean用来存放单条信息
             bean: { id: 0, name: ''},
             //pagination用来存放分页参数
             pagination:{},
@@ -26,7 +26,6 @@
         };
 
         //ViewModel
-        //创建Vue对象
         var vue = new Vue({
             //el 表示和本页面的 <div id="workingArea" > 元素绑定
             el: '#workingArea',
@@ -43,14 +42,16 @@
             * 调用成功之后，把服务端返回的数据，保存在 vue.beans 上。
             * */
             methods: {
+                //根据 url: /categories?start=  拿到分类列表和分页参数
                 list:function(start){
                     var url =  this.uri+ "?start="+start;
                     axios.get(url).then(function(response) {
+                        //拿到分页参数
                         vue.pagination = response.data;
                         vue.beans = response.data.content;
                     });
                 },
-
+                //根据 url: /categories 添加属性
                 add: function () {
                     //首先判断分类名是否为空。
                     if(!checkEmpty(this.bean.name, "分类名称"))
@@ -59,7 +60,6 @@
                     if(!checkEmpty(this.file, "分类图片"))
                         return;
                     var url = this.uri;
-
                     //axios.js 上传文件要用 formData 这种方式
                     var formData = new FormData();
                     formData.append("image", this.file);
@@ -73,18 +73,16 @@
                         vue.file = null;
                     });
                 },
-
                 //当上传控件选中某个本地文件的时候，这个文件对象就会保存在data4Vue.file 上
                 getFile: function (event) {
                     this.file = event.target.files[0];
                 },
-
                 //函数名用的 deleteBean, 而不是 delete, 因为 delete 是保留字
+                //根据 url: /categories/id 删除分类
                 deleteBean: function (id) {
                     //是否删除确认
                     if(!checkDeleteLink())
                         return;
-                    //组织url, 删除的规范是 /categoreis/123. 要这样写
                     var url = this.uri+"/"+id;
                     //通过axios 提交 delete 请求
                     axios.delete(url).then(function(response){
@@ -98,7 +96,6 @@
                         }
                     });
                 },
-
                 jump: function(page){
                     jump(page,vue); //定义在adminHeader.html 中
                 },
