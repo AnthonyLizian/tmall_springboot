@@ -1,9 +1,12 @@
 <div class="pageDiv" th:fragment="html">
 	<nav>
 	  <ul class="pagination">
+		<!-- 这是首页，当 pagination.first 为真的时候，就表示当前是首页，那么首页对应的 li 的 class 就会是 disabled, 就点击不了。-->
 	    <li :class="{ disabled: pagination.first }">
+		  <!-- 点击的时候，会调用jump 函数，并且传 'first' 进去。-->
 	      <a  href="#nowhere" @click="jump('first')">«</a>
 	    </li>
+
 	    <li :class="{ disabled: !pagination.hasPrevious }">
 	      <a  href="#nowhere" @click="jump('pre')">‹</a>
 	    </li>		    

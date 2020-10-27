@@ -2,8 +2,10 @@ package com.how2java.tmall.web;
 
 import com.how2java.tmall.pojo.Category;
 import com.how2java.tmall.service.CategoryService;
+import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,7 +20,11 @@ public class CategoryController {
     * 因为是声明为 @RestController， 所以这个集合，又会被自动转换为 JSON数组抛给浏览器。
     * */
     @GetMapping("/categories")
-    public List<Category> list() throws Exception {
-        return categoryService.list();
+    public Page4Navigator<Category> list(@RequestParam(value = "start", defaultValue = "0") int start,
+                                         @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
+        start = start<0?0:start;
+        //5表示导航分页最多有5个，像 [1,2,3,4,5] 这样
+        Page4Navigator<Category> page =categoryService.list(start, size, 5);
+        return page;
     }
 }

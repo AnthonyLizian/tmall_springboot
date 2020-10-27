@@ -6,17 +6,17 @@
 	<script src="js/axios/0.17.1/axios.min.js"></script>
 	<script src="js/moment/2.22.2/moment.js"></script> <!-- vue.js 格式化日期用的 -->
 	<link href="css/back/style.css" rel="stylesheet">
-	
+
+	<!-- script-->
 	<script>
 	//判断是否为空
 	function checkEmpty(value,text){
-		
 		if(null==value || value.length==0){
 			alert(text+ "不能为空");
 			return false;
 		}
 		return true;
-	}	
+	}
 	
     //获取地址栏参数的函数
     function getUrlParms(para){
@@ -49,7 +49,6 @@
     
     //判断是否数字 (小数和整数)
 	function checkNumber(value, text){
-		
 		if(value.length==0){
 			alert(text+ "不能为空");
 			return false;
@@ -60,9 +59,9 @@
 		}
 		return true;
 	}
+
     //判断是否整数
 	function checkInt(value, text){
-		
 		if(value.length==0){
 			alert(text+ "不能为空");
 			return false;
@@ -79,28 +78,37 @@
 		var confirmDelete = confirm("确认要删除");
 		if(confirmDelete)
 			return true;
-		return false;		
+		return false;
 	}
-    //跳转函数
-    function jump(page,vue){
+
+    //跳转函数jump
+	/*
+	* 当调用的时候传递的参数是 'first' 的时候，就调用 vue.list(0) 函数，并且传参数：0进去
+	* 这样就从服务器获取了首页的数据，vue.js 会自动刷新 table 里的数据。
+	* 除了 first, 其他的 pre, next, last 分别表示 上一页，下一页，最后一页，都是类似的用法
+	* */
+	function jump(page,vue){
 		if('first'== page && !vue.pagination.first)
 			vue.list(0);
-		
+
 		else if('pre'== page &&	vue.pagination.hasPrevious )
 			vue.list(vue.pagination.number-1);
-		
+
 		else if('next'== page && vue.pagination.hasNext)
-			vue.list(vue.pagination.number+1);					
-		
+			vue.list(vue.pagination.number+1);
+
 		else if('last'== page && !vue.pagination.last)
-			vue.list(vue.pagination.totalPages-1);    	
-    }
-    //跳转函数
+			vue.list(vue.pagination.totalPages-1);
+	}
+
+    //跳转函数jumpByNumber
     function jumpByNumber(start,vue){
     	if(start!=vue.pagination.number)
 			vue.list(start);       	
     }
-	</script>	
+	</script>
+
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 	
 	<title th:text="${title}" ></title>
+
 </template>

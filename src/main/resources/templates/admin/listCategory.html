@@ -15,6 +15,7 @@
         var data4Vue = {
             //uri表示访问哪个地址去获取数据
             uri:'categories',
+            pagination:{},
             beans: []
         };
 
@@ -28,7 +29,7 @@
             //mounted 表示这个 Vue 对象加载成功了
             //加载Vue对象成功之后会调用，成功的时候去调用 list() 函数。
             mounted:function(){
-                this.list();
+                this.list(0);
             },
             /*
             * list 函数使用 data4Vue里的 uri作为地址，
@@ -36,11 +37,18 @@
             * 调用成功之后，把服务端返回的数据，保存在 vue.beans 上。
             * */
             methods: {
-                list:function(){
-                    var url =  this.uri;
+                list:function(start){
+                    var url =  this.uri+ "?start="+start;
                     axios.get(url).then(function(response) {
-                        vue.beans = response.data;
+                        vue.pagination = response.data;
+                        vue.beans = response.data.content;
                     });
+                },
+                jump: function(page){
+                    jump(page,vue); //定义在adminHeader.html 中
+                },
+                jumpByNumber: function(start){
+                    jumpByNumber(start,vue);
                 }
             }
         });
@@ -86,6 +94,8 @@
 
         </table>
     </div>
+    <!-- 分页 -->
+    <div th:replace="include/admin/adminPage::html" ></div>
 </div>
 
 <!-- adminFooter -->
