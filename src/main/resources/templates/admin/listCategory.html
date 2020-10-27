@@ -15,8 +15,14 @@
         var data4Vue = {
             //uri表示访问哪个地址去获取数据
             uri:'categories',
+            //beans存放分类列表
+            beans: [],
+            // bean用来存放单条分类信息
+            bean: { id: 0, name: ''},
+            //pagination用来存放分页参数
             pagination:{},
-            beans: []
+            //file 用来表示上传的文件
+            file: null
         };
 
         //ViewModel
@@ -27,7 +33,7 @@
             //data 表示vue 使用data4Vue对象
             data: data4Vue,
             //mounted 表示这个 Vue 对象加载成功了
-            //加载Vue对象成功之后会调用，成功的时候去调用 list() 函数。
+            //加载Vue对象成功之后会调用，成功的时候去调用 list(0) 函数。
             mounted:function(){
                 this.list(0);
             },
@@ -44,6 +50,55 @@
                         vue.beans = response.data.content;
                     });
                 },
+
+                add: function () {
+                    //首先判断分类名是否为空。
+                    if(!checkEmpty(this.bean.name, "分类名称"))
+                        return;
+                    //判断分类图片是否为空
+                    if(!checkEmpty(this.file, "分类图片"))
+                        return;
+                    var url = this.uri;
+
+                    //axios.js 上传文件要用 formData 这种方式
+                    var formData = new FormData();
+                    formData.append("image", this.file);
+                    formData.append("name", this.bean.name);
+                    axios.post(url,formData).then(function(response){
+                        //上传成功后， 调用 vue.list(0) 重新查询第一页的数据。
+                        vue.list(0);
+                        //还原数据，如： vue.bean, vue.file, 还有上传控件里面的值
+                        vue.bean = { id: 0, name: '', hp: '0'};
+                        $("#categoryPic").val('');
+                        vue.file = null;
+                    });
+                },
+
+                //当上传控件选中某个本地文件的时候，这个文件对象就会保存在data4Vue.file 上
+                getFile: function (event) {
+                    this.file = event.target.files[0];
+                },
+
+                //函数名用的 deleteBean, 而不是 delete, 因为 delete 是保留字
+                deleteBean: function (id) {
+                    //是否删除确认
+                    if(!checkDeleteLink())
+                        return;
+                    //组织url, 删除的规范是 /categoreis/123. 要这样写
+                    var url = this.uri+"/"+id;
+                    //通过axios 提交 delete 请求
+                    axios.delete(url).then(function(response){
+                        //根据 REST 规范，当删除数据后，应该返回一个空字符串，所以会判断 0!=response.data.length
+                        if(0!=response.data.length){
+                            alert(response.data);
+                        }
+                        else{
+                            //当是空字符串的时候，调用 vue.list(0) 查询第一页。
+                            vue.list(0);
+                        }
+                    });
+                },
+
                 jump: function(page){
                     jump(page,vue); //定义在adminHeader.html 中
                 },
@@ -88,14 +143,40 @@
                     <td><a :href="'admin_property_list?cid=' + bean.id "><span class="glyphicon glyphicon-th-list"></span></a></td>
                     <td><a :href="'admin_product_list?cid=' + bean.id "><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
                     <td><a :href="'admin_category_edit?id=' + bean.id "><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <!-- @click="deleteBean(bean.id) 调用deleteBean 函数 -->
                     <td><a href="#nowhere"  @click="deleteBean(bean.id)"><span class="   glyphicon glyphicon-trash"></span></a></td>
                 </tr>
             </tbody>
 
         </table>
     </div>
+
     <!-- 分页 -->
     <div th:replace="include/admin/adminPage::html" ></div>
+
+    <!-- 添加分类 -->
+    <div class="panel panel-warning addDiv">
+        <div class="panel-heading">新增分类</div>
+        <div class="panel-body">
+            <table class="addTable">
+                <tr>
+                    <td>分类名称</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.name" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>分类图片</td>
+                    <td>
+                        <input id="categoryPic" accept="image/*" type="file" name="image" @change="getFile($event)" />
+                    </td>
+                </tr>
+                <tr class="submitTR">
+                    <td colspan="2" align="center">
+                        <a href="#nowhere"  @click="add" class="btn btn-success">提交</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- adminFooter -->
