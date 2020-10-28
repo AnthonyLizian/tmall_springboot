@@ -137,8 +137,10 @@
                     <td>{{bean.id}}</td>
                     <td><img height="40px"  :src="'img/category/'+bean.id+'.jpg'"></td>
                     <td>{{bean.name}}</td>
+
                     <td><a :href="'admin_property_list?cid=' + bean.id "><span class="glyphicon glyphicon-th-list"></span></a></td>
                     <td><a :href="'admin_product_list?cid=' + bean.id "><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
+
                     <td><a :href="'admin_category_edit?id=' + bean.id "><span class="glyphicon glyphicon-edit"></span></a></td>
                     <!-- @click="deleteBean(bean.id) 调用deleteBean 函数 -->
                     <td><a href="#nowhere"  @click="deleteBean(bean.id)"><span class="   glyphicon glyphicon-trash"></span></a></td>
