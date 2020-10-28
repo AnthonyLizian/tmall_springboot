@@ -21,6 +21,7 @@
                 this.get();
             },
             methods: {
+                //根据 url: /products/id 获得属性
                 get:function(){
                     var id = getUrlParms("id");
                     var url = this.uri+"/"+id;
@@ -29,6 +30,8 @@
                         vue.category = vue.bean.category;
                     })
                 },
+                //根据 url: /products 修改属性
+                //修改完跳转到admin_product_list?cid=
                 update:function () {
                     if(!checkEmpty(this.bean.name, "产品名称"))
                         return;
